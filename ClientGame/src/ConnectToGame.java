@@ -1,4 +1,4 @@
-import GUI.SetUp;
+import GUI.SetUpUI;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -15,19 +15,7 @@ public class ConnectToGame {
     }
 
     public ConnectToGame(){
-        new SetUp();
-    }
-
-    public void hostGame(){
-
-        try {
-            InetAddress hostAddress = InetAddress.getLocalHost();
-            System.out.println("Please give the following address to players who wish to join: "+hostAddress.getHostName());
-
-        }
-        catch (UnknownHostException e){
-            System.err.println("Unknown Host: "+e);
-        }
+        new SetUpUI();
     }
 
     public void joinGame(){

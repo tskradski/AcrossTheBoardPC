@@ -2,10 +2,13 @@ package GUI;
 
 import javax.swing.*;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  * Created by thomas on 11/4/15.
  */
-public class SetUp extends JFrame{
+public class SetUpUI extends JFrame{
     private JPanel rootPanel;
     private JPanel eastPanel;
     private JPanel westPanel;
@@ -18,12 +21,25 @@ public class SetUp extends JFrame{
     private JButton hostGameButton;
     private JButton gameHubButton;
 
-    public SetUp(){
+    public SetUpUI(){
         super("Set up Game");
 
         setContentPane(rootPanel);
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+        hostGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new HostGameUI();
+            }
+        });
+
+        joinGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new JoinGameUI();
+            }
+        });
     }
 }
