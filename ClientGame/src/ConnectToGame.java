@@ -1,3 +1,5 @@
+import GUI.SetUp;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -13,7 +15,7 @@ public class ConnectToGame {
     }
 
     public ConnectToGame(){
-
+        new SetUp();
     }
 
     public void hostGame(){
