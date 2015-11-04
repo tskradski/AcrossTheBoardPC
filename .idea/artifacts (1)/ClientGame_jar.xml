@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ClientGame:jar">
+    <output-path>C:/Development/AcrossTheBoardPC</output-path>
+    <root id="archive" name="ClientGame.jar">
+      <element id="module-output" name="ClientGame" />
+    </root>
+  </artifact>
+</component>
