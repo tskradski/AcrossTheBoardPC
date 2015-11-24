@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,14 +8,47 @@ import java.util.List;
 /**
  * Created by thomas on 11/3/15.
  */
-public class Player {
+public class Player implements Serializable{
 
     private static int numPlayers = 0;
 
     private List<Horse> horses;
     private int money;
     private String name;
-    private InetAddress clientAddress;
+
+    public List<Horse> getHorses() {
+        return horses;
+    }
+
+    public void setHorses(List<Horse> horses) {
+        this.horses = horses;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public InetAddress getClientAddress() {
+        return clientAddress;
+    }
+
+    public void setClientAddress(InetAddress clientAddress) {
+        this.clientAddress = clientAddress;
+    }
+
+    InetAddress clientAddress;
 
     public Player()
     {

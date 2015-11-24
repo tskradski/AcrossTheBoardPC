@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 /**
  * Created by thomas on 11/18/15.
  */
-public class ServerConsole extends JFrame {
+public class ServerUI extends JFrame {
 
     GameServer gameServer;
 
@@ -21,10 +21,10 @@ public class ServerConsole extends JFrame {
     private JTextField hostAddressTextField;
     private JTextField portTextField;
 
-    public ServerConsole(){
+    public ServerUI(){
         super("Across the Board Server Console");
 
-        gameServer = new GameServer();
+        gameServer = new GameServer(this);
 
         setContentPane(rootPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,7 +64,20 @@ public class ServerConsole extends JFrame {
     }
 
     public static void main (String args[]){
-        new ServerConsole();
+        new ServerUI();
+    }
+
+    public void update(){
+        pendingGameTextArea.setText("");
+        for (PendingGame game : gameServer.getPendingGames()){
+            pendingGameTextArea.append(game.getGameId()+"\n");
+        }
+
+        activeGamesTextArea.setText("");
+        for (ActiveGame game : gameServer.getActiveGames()){
+            // TODO: add functionally after active game is impl
+            activeGamesTextArea.append(game.getClass().toString());
+        }
     }
 
 }

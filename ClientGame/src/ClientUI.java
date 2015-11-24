@@ -1,5 +1,3 @@
-package GUI;
-
 import javax.swing.*;
 
 import java.awt.event.ActionEvent;
@@ -8,21 +6,35 @@ import java.awt.event.ActionListener;
 /**
  * Created by thomas on 11/4/15.
  */
-public class SetUpUI extends JFrame{
+public class ClientUI extends JFrame{
+
+     ClientService clientService;
+
     private JPanel rootPanel;
     private JPanel eastPanel;
     private JPanel westPanel;
     private JPanel southPanel;
-    private JTextField descriptionBarTextField;
     private JLabel titleLabel1;
     private JLabel titleLabel3;
     private JLabel titleLabel2;
     private JButton joinGameButton;
     private JButton hostGameButton;
-    private JButton gameHubButton;
+    private JTextField connectionToServerTextField;
 
-    public SetUpUI(){
+
+    public ClientUI(String serverAddress){
         super("Set up Game");
+
+        clientService = new ClientService();
+
+        if (clientService.connectToServer(serverAddress)){
+            connectionToServerTextField.setText("Connected to server");
+        }
+        else {
+            connectionToServerTextField.setText("Unable to connect to server");
+            joinGameButton.setEnabled(false);
+            hostGameButton.setEnabled(false);
+        }
 
         setContentPane(rootPanel);
         pack();
@@ -31,15 +43,16 @@ public class SetUpUI extends JFrame{
         hostGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new HostGameUI();
+                new StartNewGameUI(clientService);
             }
         });
 
         joinGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new JoinGameUI();
+                new JoinGameUI(clientService);
             }
         });
     }
+
 }

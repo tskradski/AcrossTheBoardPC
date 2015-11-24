@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -9,36 +7,45 @@ import java.util.List;
 /**
  * Created by thomas on 11/18/15.
  */
-public class PendingGame extends Thread{
+public class PendingGame extends Thread {
 
-    long gameId;
-    String gameName;
+    public static int id = 1;
+    private GameServer callback;
+    List<PlayerConnection> playerList;      // playerList(0) is the host socket
+    private String gameId;
 
-    // playerSockets(0) is the host socket
-    List<Socket> playerSockets;
+    public String getGameId() {
+        return gameId;
+    }
 
-    public PendingGame(Socket socket){
-        playerSockets = new ArrayList<>(6);
-        playerSockets.add(socket);
-        this.gameId = this.getId();
+    public List<PlayerConnection> getPlayerList() {
+        return playerList;
+    }
+
+    public PendingGame(GameServer callback, Socket socket, Player player) {
+        playerList = new ArrayList<>(6);
+
+        playerList.add(new PlayerConnection(player, socket));
+        gameId = player.getName() + id;
+        id++;
+        this.callback = callback;
     }
 
     @Override
     public void run() {
         try {
-            // get name of game from socket
-            BufferedReader input = new BufferedReader(new InputStreamReader(playerSockets.get(0).getInputStream()));
-            gameName = input.readLine();
+            callback.addPendingGame(this);
 
-            PrintWriter output = new PrintWriter(playerSockets.get(0).getOutputStream());
+            PrintWriter output = new PrintWriter(playerList.get(0).getSocket().getOutputStream());
             output.write("received");
             output.flush();
-        } catch (IOException e){
-            System.err.println("Error reading info from socket on game ID: "+gameId+": "+e);
+        } catch (IOException e) {
+            System.err.println("Error reading info from socket on game ID: " + gameId + ": " + e);
         }
     }
 
-    public void stopPendingGame(){
-
+    public void addPlayerToGame(Player player, Socket socket) {
+        playerList.add(new PlayerConnection(player, socket));
+        LOGGER.echo("New player added to list");
     }
 }
