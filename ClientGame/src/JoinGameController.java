@@ -5,20 +5,21 @@ import java.util.List;
  */
 public class JoinGameController {
 
-    ClientService clientService;
+    ClientController clientController;
 
-    public JoinGameController(ClientService clientService){
-        this.clientService = clientService;
+    public JoinGameController(ClientController clientController){
+        this.clientController = clientController;
     }
 
     public List<String> getGameList(){
-        return clientService.getPendingGames();
+        return clientController.getPendingGames();
     }
 
-    public boolean connectToGame(String gameId){
+    public boolean connectToGame(String gameId, String playerName){
 
-        if (clientService.isGameActive(gameId)){
-            clientService.connectToGame(gameId);
+        if (clientController.isGameActive(gameId)){
+            clientController.sendJoinGameRequest(gameId, playerName);
+
             return true;
         }
         else {

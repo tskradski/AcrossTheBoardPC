@@ -6,6 +6,12 @@ import java.net.Socket;
 public class PlayerConnection {
 
     Socket socket;
+    Player player;
+
+    public PlayerConnection(Player player, Socket socket){
+        this.player = player;
+        this.socket = socket;
+    }
 
     public Player getPlayer() {
         return player;
@@ -15,11 +21,5 @@ public class PlayerConnection {
         return socket;
     }
 
-    Player player;
-
-    public PlayerConnection(Player player, Socket socket){
-        this.player = player;
-        this.socket = socket;
-    }
 
 }

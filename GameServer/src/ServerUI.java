@@ -2,13 +2,15 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
 
 /**
  * Created by thomas on 11/18/15.
  */
 public class ServerUI extends JFrame {
 
-    GameServer gameServer;
+    ServerControllerImpl serverControllerImpl;
 
     private JPanel rootPanel;
     private JPanel centerPanel;
@@ -24,7 +26,11 @@ public class ServerUI extends JFrame {
     public ServerUI(){
         super("Across the Board Server Console");
 
-        gameServer = new GameServer(this);
+        try {
+            serverControllerImpl = new ServerControllerImpl(this);
+        } catch (RemoteException e){
+            LOGGER.error("Unable to start server: "+e);
+        }
 
         setContentPane(rootPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,11 +41,18 @@ public class ServerUI extends JFrame {
         startServerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(gameServer.startServer()){
+                if(serverControllerImpl.startServer()){
                     startServerButton.setEnabled(false);
-                    hostAddressTextField.setText(gameServer.getHostAddress());
-                    portTextField.setText(gameServer.getPort()+"");
+                    hostAddressTextField.setText(serverControllerImpl.getHostAddress());
+                    portTextField.setText(Globals.RMI_PORT+"");
                     stopServerButton.setEnabled(true);
+
+                    // add serverController to RMI Registry
+                    try {
+                        Naming.rebind("rmi://localhost:"+Globals.RMI_PORT+"/Server", serverControllerImpl);
+                    } catch (Exception ex){
+                        LOGGER.error("Unable to add serverControllerImpl to registry: "+ex);
+                    }
                 }
                 else {
                     JOptionPane.showMessageDialog(rootPanel, "Server unable to start. Please check console for details.");
@@ -52,7 +65,7 @@ public class ServerUI extends JFrame {
                 int choice = JOptionPane.showConfirmDialog(rootPanel, "Stopping the server will disconnect all games, active and pending.\n" +
                         "Are you sure?", "Alert", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION){
-                    gameServer.stopServer();
+                    serverControllerImpl.stopServer();
                     hostAddressTextField.setText("");
                     portTextField.setText("");
                     startServerButton.setEnabled(true);
@@ -68,15 +81,19 @@ public class ServerUI extends JFrame {
     }
 
     public void update(){
-        pendingGameTextArea.setText("");
-        for (PendingGame game : gameServer.getPendingGames()){
-            pendingGameTextArea.append(game.getGameId()+"\n");
-        }
+        try {
+            pendingGameTextArea.setText("");
+            for (String game : serverControllerImpl.getPendingGames()) {
+                pendingGameTextArea.append(game + "\n");
+            }
 
-        activeGamesTextArea.setText("");
-        for (ActiveGame game : gameServer.getActiveGames()){
-            // TODO: add functionally after active game is impl
-            activeGamesTextArea.append(game.getClass().toString());
+            activeGamesTextArea.setText("");
+            for (ActiveGame game : serverControllerImpl.getActiveGames()) {
+                // TODO: add functionally after active game is impl
+                activeGamesTextArea.append(game.getClass().toString());
+            }
+        } catch (RemoteException re){
+            LOGGER.error(re.getMessage());
         }
     }
 

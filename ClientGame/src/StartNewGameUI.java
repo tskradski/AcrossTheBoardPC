@@ -8,17 +8,17 @@ import java.awt.event.ActionListener;
  */
 public class StartNewGameUI extends JFrame{
 
-    ClientService clientService;
+    ClientController clientController;
 
     private JPanel rootPanel;
     private JLabel label1;
     private JTextField playerNameTextField;
     private JButton startNewGameButton;
 
-    public StartNewGameUI(ClientService clientService){
+    public StartNewGameUI(ClientController clientController){
         super("Host a Game");
 
-        this.clientService = clientService;
+        this.clientController = clientController;
         setContentPane(rootPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
@@ -33,7 +33,7 @@ public class StartNewGameUI extends JFrame{
                    playerNameTextField.requestFocus();
                }
                else {
-                   clientService.sendNewGameRequest(playerNameTextField.getText());
+                   clientController.sendNewGameRequest(playerNameTextField.getText());
                }
             }
         });

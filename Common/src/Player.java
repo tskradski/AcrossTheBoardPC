@@ -15,6 +15,7 @@ public class Player implements Serializable{
     private List<Horse> horses;
     private int money;
     private String name;
+    InetAddress clientAddress;
 
     public List<Horse> getHorses() {
         return horses;
@@ -48,8 +49,6 @@ public class Player implements Serializable{
         this.clientAddress = clientAddress;
     }
 
-    InetAddress clientAddress;
-
     public Player()
     {
         numPlayers++;
@@ -59,6 +58,7 @@ public class Player implements Serializable{
     }
 
     public Player(String name){
+        this.name = name;
         horses = new ArrayList<Horse>();
         money = 0;
         try {

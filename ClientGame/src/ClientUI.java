@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
  */
 public class ClientUI extends JFrame{
 
-     ClientService clientService;
+     ClientController clientController;
 
     private JPanel rootPanel;
     private JPanel eastPanel;
@@ -25,9 +25,9 @@ public class ClientUI extends JFrame{
     public ClientUI(String serverAddress){
         super("Set up Game");
 
-        clientService = new ClientService();
+        clientController = new ClientController();
 
-        if (clientService.connectToServer(serverAddress)){
+        if (clientController.connectToServer(serverAddress)){
             connectionToServerTextField.setText("Connected to server");
         }
         else {
@@ -43,14 +43,14 @@ public class ClientUI extends JFrame{
         hostGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new StartNewGameUI(clientService);
+                new StartNewGameUI(clientController);
             }
         });
 
         joinGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new JoinGameUI(clientService);
+                new JoinGameUI(clientController);
             }
         });
     }

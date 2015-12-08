@@ -9,7 +9,6 @@ import java.util.List;
  */
 public class JoinGameUI extends JFrame{
 
-    ClientService clientService;
     JoinGameController joinGameController;
     private JPanel rootPanel;
     private JPanel westPanel;
@@ -18,14 +17,11 @@ public class JoinGameUI extends JFrame{
     private JButton joinGameButton;
     private List<String> list;
 
-    public JoinGameUI(ClientService clientService){
+    public JoinGameUI(ClientController clientController){
         super("Join an existing game");
-
-        this.clientService = clientService;
-        joinGameController = new JoinGameController(clientService);
+        joinGameController = new JoinGameController(clientController);
 
         // populate game list
-        clientService.sendJoinGameRequest();
         list = joinGameController.getGameList();
         String[] listData;
         if (list.size() > 0 && list != null){
@@ -36,12 +32,9 @@ public class JoinGameUI extends JFrame{
         }
         gamelist.setListData(listData);
 
-        LOGGER.echo(list.toString());
-
         setContentPane(rootPanel);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setSize(400 , 400);
-        //pack();
         setVisible(true);
 
         joinGameButton.addActionListener(new ActionListener() {
@@ -53,10 +46,10 @@ public class JoinGameUI extends JFrame{
     }
 
     public void joinGameButton_OnClick(){
-        LOGGER.echo("JoinGameUI.joinGameButton started");
         String selection;
+        String playerName = JOptionPane.showInputDialog("Please enter player name: ");
         if ((selection = gamelist.getSelectedValue()) != null){
-            joinGameController.connectToGame(selection);
+            joinGameController.connectToGame(selection, playerName);
         }
     }
 }
