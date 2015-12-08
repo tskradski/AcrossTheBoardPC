@@ -13,6 +13,7 @@ public class PendingGame{
 
     public PendingGame(Player player) {
         playerList = new ArrayList<>(6);
+        playerList.add(player);
         gameId = player.getName();
         gameId += id+"";
         id++;
@@ -25,6 +26,14 @@ public class PendingGame{
 
     public List<Player> getPlayerList() {
         return playerList;
+    }
+
+    public List<String> getPlayerListByName(){
+        List<String> list = new ArrayList<>();
+        for(Player player: playerList){
+            list.add(player.getName());
+        }
+        return list;
     }
 
     public void addPlayerToGame(Player player) {

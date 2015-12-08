@@ -1,5 +1,9 @@
+import Commands.AddPlayer;
+
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -37,6 +41,7 @@ public class ServerControllerImpl extends UnicastRemoteObject implements ServerC
     List<ActiveGame> activeGames;
     ServerUI callback;
     private InetAddress hostAddress;
+    private Thread broadcastCommand;
 
     public ServerControllerImpl(ServerUI callback) throws RemoteException{
         this.callback = callback;
@@ -70,6 +75,7 @@ public class ServerControllerImpl extends UnicastRemoteObject implements ServerC
             // start RMI registry
             Thread t = new RMIRegThread(Globals.RMI_PORT);
             t.start();
+
             return true;
         }
         catch (Exception e){
@@ -94,16 +100,30 @@ public class ServerControllerImpl extends UnicastRemoteObject implements ServerC
     }
 
     @Override
-    public int addNewGame(Player player) throws RemoteException{
-        pendingGames.add(new PendingGame(player));
+    public String addNewGame(Player player) throws RemoteException{
+        PendingGame pg = new PendingGame(player);
+        pendingGames.add(pg);
         callback.update();
-        return 1;
+        return pg.getGameId();
     }
 
     @Override
     public boolean addPlayerToGame(String id, Player player)throws RemoteException{
         for (PendingGame game: pendingGames){
             if (game.getGameId().equals(id)){
+
+                // notify creator of game that a new player has joined.
+                Player creator = game.getPlayerList().get(0);
+                try {
+                    Socket socket = new Socket(creator.getClientAddress(), Globals.CLIENT_PORT);
+                    ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+                    output.writeObject(new AddPlayer(player.getName()));
+                    output.flush();
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 game.addPlayerToGame(player);
                 return true;
             }
@@ -128,6 +148,24 @@ public class ServerControllerImpl extends UnicastRemoteObject implements ServerC
             pendingGamesList.add(game.getGameId());
         }
         return pendingGamesList;
+    }
+
+    @Override
+    public void startPendingGame(String id) throws RemoteException{
+        // TODO: change pending to active
+
+
+    }
+
+    @Override
+    public List<String> getPlayerListByGameId(String id) throws RemoteException {
+        List<String> playerList = new ArrayList<>();
+        for(PendingGame game : pendingGames){
+            if (game.getGameId().equals(id)){
+                playerList = game.getPlayerListByName();
+            }
+        }
+        return playerList;
     }
 
 

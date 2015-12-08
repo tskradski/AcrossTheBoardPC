@@ -29,12 +29,17 @@ public class ClientController {
         }
     }
 
-    public void sendNewGameRequest(String playerName){
+    public String sendNewGameRequest(String playerName){
+        String gameId = "";
         player = new Player(playerName);
         try {
-            port = server.addNewGame(player);
+
+            gameId = server.addNewGame(player);
             LOGGER.echo("New game started");
-        } catch (Exception e){LOGGER.display("New game request failed: "+e);}
+        } catch (Exception e){
+            LOGGER.display("New game request failed: "+e);
+        }
+        return gameId;
     }
 
     public void sendJoinGameRequest(String gameId, String playerName){
@@ -42,9 +47,9 @@ public class ClientController {
         try {
             listener = new Listener(this);
             listener.start();
+            waitingOnGameStart = true;
 
             server.addPlayerToGame(gameId, player);
-            waitingOnGameStart = true;
 
             LOGGER.echo("New game started");
         } catch (Exception e){LOGGER.display("Add player to  game request failed: "+e);}
@@ -68,12 +73,20 @@ public class ClientController {
         }
     }
 
+    public List<String> getPlayerList(String gameId){
+        try {
+            return server.getPlayerListByGameId(gameId);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     // ************************
     //
     // Callback methods
     //
     // ************************
-
 
 
 }

@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,7 +34,17 @@ public class StartNewGameUI extends JFrame{
                    playerNameTextField.requestFocus();
                }
                else {
-                   clientController.sendNewGameRequest(playerNameTextField.getText());
+                   String gameid = clientController.sendNewGameRequest(playerNameTextField.getText());
+                   EventQueue.invokeLater(new Runnable() {
+                       @Override
+                       public void run() {
+                           new BeginGameUI(clientController, gameid);
+                       }
+                   });
+
+                   setVisible(false);
+                   dispose();
+
                }
             }
         });
